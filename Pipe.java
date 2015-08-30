@@ -1,7 +1,7 @@
 import java.util.Map;
 
 public class Pipe implements Pipable {
-    public Map<String, String> data;
+    public Map<String, String[]> data;
 	public Pipable next;
 
 	public Pipe(Pipable next) {
@@ -15,7 +15,7 @@ public class Pipe implements Pipable {
     }
 
 	@Override
-	public void receive(Map<String, String> data) {
+	public void receive(Map<String, String[]> data) {
 		System.err.println("Pipe receiving data.");
 		this.data = data;
 		forward();
