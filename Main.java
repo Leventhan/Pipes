@@ -32,29 +32,27 @@ public class Main {
 	        System.exit(1);
 		}
 		
-		// TODO: Switch between architecture		
+		// Switch between architecture		
 		if (whichArchitecture == 1){
-			
+			// Prepare data for Pipe and Filter
+			Map<String, String[]> data = new HashMap<String, String[]>();
+			data.put("titles", titles);
+			data.put("ignored", ignored);
+
+			// Pipe and Filter
+			Sink<Object, Object> sink = new DisplaySink();
+			Pipe sinkPipe = new Pipe(sink);
+			Filter alphabeticalSortFilter = new alphabeticalSortFilter(sinkPipe);
+			Pipe alphabeticalSortPipe = new Pipe(alphabeticalSortFilter);
+			Filter pruneIgnoredFilter = new pruneIgnoredFilter(alphabeticalSortPipe);
+			Pipe pruneIgnoredPipe = new Pipe(pruneIgnoredFilter);
+			Filter circularShiftFilter = new circularShiftFilter(pruneIgnoredPipe);
+			Pipe circularShiftPipe = new Pipe(circularShiftFilter);
+			Pump pump = new KWICPump(data, circularShiftPipe);
+			pump.start();
 		} else {
-			
+			// TODO: Shared Repository Solution
 		}
-		
-		// Prepare data for Pipe and Filter
-		Map<String, String[]> data = new HashMap<String, String[]>();
-		data.put("titles", titles);
-		data.put("ignored", ignored);
-	
-		// Pipe and Filter
-		Sink<Object, Object> sink = new DisplaySink();
-		Pipe sinkPipe = new Pipe(sink);
-		Filter alphabeticalSortFilter = new alphabeticalSortFilter(sinkPipe);
-		Pipe alphabeticalSortPipe = new Pipe(alphabeticalSortFilter);
-		Filter pruneIgnoredFilter = new pruneIgnoredFilter(alphabeticalSortPipe);
-		Pipe pruneIgnoredPipe = new Pipe(pruneIgnoredFilter);
-		Filter circularShiftFilter = new circularShiftFilter(pruneIgnoredPipe);
-		Pipe circularShiftPipe = new Pipe(circularShiftFilter);
-		Pump pump = new KWICPump(data, circularShiftPipe);
-		pump.start();
 	}
 
 	private static String[] readLines(String filepath) {
